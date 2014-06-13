@@ -1,0 +1,103 @@
+	<template name="Customers">
+		{{> CustomersView}}
+	</template>
+
+	<template name="CustomersView">
+		<div id="dataview">
+			<h2 id="dataview-title">
+				Customers
+			</h2>
+			<form id="dataview-controls" class="form-inline">
+				<div id="dataview-controls-insert" class="form-group">
+					<button type="submit" id="dataview-insert-button" class="btn btn-success">
+						<span class="fa fa-plus">
+						</span>
+						Add new
+					</button>
+				</div>
+				<div id="dataview-controls-search">
+					{{#if isNotEmpty}}
+					<div id="dataview-controls-search-group" class="form-group">
+						<label class="sr-only" for="search">
+							Search
+						</label>
+						<input type="text" class="form-control" id="dataview-search-input" placeholder="Search" name="search" value="{{searchString}}" autofocus="autofocus">
+						<button type="button" id="dataview-search-button" class="btn btn-default">
+							<span class="fa fa-search">
+							</span>
+						</button>
+					</div>
+					{{/if}}
+				</div>
+			</form>
+			{{#if isNotEmpty}}		
+			{{#if isNotFound}}
+			<div class="alert alert-warning">
+				Not found.
+			</div>
+			{{else}}
+			<div id="dataview-data">
+				{{> CustomersViewData}}
+			</div>
+			{{/if}}		
+		{{else}}
+			<div class="alert alert-info">
+				No customers :(
+			</div>
+			{{/if}}
+		</div>
+	</template>
+
+	<template name="CustomersViewData">
+		<table id="dataview-table" class="table table-hover">
+			<thead id="dataview-data-header">
+				{{> CustomersViewDataHeader}}
+			</thead>
+			<tbody id="dataview-data-items">
+				{{#each customers}} {{> CustomersViewDataItems}} {{/each}}
+			</tbody>
+		</table>
+	</template>
+
+	<template name="CustomersViewDataHeader">
+		<tr id="dataview-data-header-row">
+			<th class="th-sortable" data-sort="name">
+				Name
+			</th>
+			<th class="th-sortable" data-sort="phone">
+				Phone
+			</th>
+			<th class="th-sortable" data-sort="email">
+				E-mail
+			</th>
+			<th>
+				&nbsp;
+			</th>
+			<th>
+				&nbsp;
+			</th>
+		</tr>
+	</template>
+
+	<template name="CustomersViewDataItems">
+		<tr id="dataview-data-items-row">
+			<td>
+				{{name}}
+			</td>
+			<td>
+				{{phone}}
+			</td>
+			<td>
+				{{email}}
+			</td>
+			<td class="td-icon">
+				<span id="edit-button" class="fa fa-pencil" title="Edit">
+				</span>
+			</td>
+			<td class="td-icon">
+				<span id="delete-button" class="fa fa-trash-o" title="Delete">
+				</span>
+			</td>
+		</tr>
+	</template>
+

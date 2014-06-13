@@ -1,0 +1,8 @@
+{
+  "packages": {
+    "iron-router": {},
+    "bootstrap3-less": {},
+    "font-awesome": {},
+    "bootboxjs": {}
+  }
+}

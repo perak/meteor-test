@@ -1,0 +1,52 @@
+	<template name="CustomersEdit">
+		{{> CustomersEditEditForm}}
+	</template>
+
+	<template name="CustomersEditEditForm">
+		<h2 id="form-title">
+			Edit customer
+		</h2>
+		<form id="form" role="form">
+			<div class="form-group">
+				<label for="name">
+					Name
+				</label>
+				<input type="text" name="name" value="{{name}}" class="form-control" autofocus="autofocus" required="required">
+				<span id="help-text" class="help-block">
+				</span>
+				<span id="error-text" class="help-block">
+				</span>
+			</div>
+			<div class="form-group">
+				<label for="phone">
+					Phone
+				</label>
+				<input type="text" name="phone" value="{{phone}}" class="form-control">
+				<span id="help-text" class="help-block">
+				</span>
+				<span id="error-text" class="help-block">
+				</span>
+			</div>
+			<div class="form-group">
+				<label for="email">
+					E-mail
+				</label>
+				<input type="text" name="email" value="{{email}}" class="form-control" data-type="email">
+				<span id="help-text" class="help-block">
+				</span>
+				<span id="error-text" class="help-block">
+				</span>
+			</div>
+			<div class="form-group">
+				<button id="form-submit-button" class="btn btn-success" type="submit">
+					<span class="fa fa-check">
+					</span>
+					Save
+				</button>
+				<a href="{{pathFor 'customers'}}" id="form-cancel-button" class="btn btn-default">
+					Cancel
+				</a>
+			</div>
+		</form>
+	</template>
+

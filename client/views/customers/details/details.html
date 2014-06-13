@@ -1,0 +1,42 @@
+	<template name="CustomersDetails">
+		<h2 id="page_title">
+			Details
+			<a href="{{pathFor 'customers'}}" id="page-close-button" class="btn btn-danger pull-right" title="Close">
+				<span class="fa fa-times">
+				</span>
+			</a>
+		</h2>
+		{{> CustomersDetailsDetailsForm}}
+	</template>
+
+	<template name="CustomersDetailsDetailsForm">
+		<form id="form" role="form">
+			<div class="form-group">
+				<label for="name">
+					Name
+				</label>
+				<p class="form-control-static">
+					{{name}}
+				</p>
+			</div>
+			<div class="form-group">
+				<label for="phone">
+					Phone
+				</label>
+				<p class="form-control-static">
+					{{phone}}
+				</p>
+			</div>
+			<div class="form-group">
+				<label for="email">
+					E-mail
+				</label>
+				<p class="form-control-static">
+					{{email}}
+				</p>
+			</div>
+			<div class="form-group">
+			</div>
+		</form>
+	</template>
+

@@ -1,0 +1,22 @@
+	<template name="Home">
+		{{> HomeHomeJumbotron}}
+	</template>
+
+	<template name="HomeHomeJumbotron">
+		<div class="jumbotron">
+			<div class="container">
+				<h1 id="jumbotron-title">
+					Example application
+				</h1>
+				<p id="jumbotron-text">
+					<b>This meteor application is made with meteor-generator without manual coding.</b><br />It demonstrates how to use DataView and Form components to create simple database application with view, search, insert, edit and delete functions.
+				</p>
+				<p id="jumbotron-button">
+					<a href="{{pathFor 'customers'}}" class="btn btn-primary btn-lg" role="button">
+						View Example
+					</a>
+				</p>
+			</div>
+		</div>
+	</template>
+
