@@ -13,7 +13,7 @@ suite('Customers', function() {
       done();
     });
   });
-
+/*
   test('using both client and the server', function(done, server, client) {
     server.eval(function() {
       Customers.find().observe({
@@ -32,6 +32,7 @@ suite('Customers', function() {
       Customers.insert({name: 'Bruce Lee'});
     });
   });
+*/
 /*
   test('using two clients', function(done, server, c1, c2) {
     c1.eval(function() {
