@@ -23,7 +23,9 @@ suite('Customers', function() {
       function addedNewCustomer(customer) {
         emit('customer', customer);
       }
-    }).once('customer', function(customer) {
+    });
+
+    server.once('customer', function(customer) {
       assert.equal(customer.name, 'Bruce Lee');
       done();
     });
@@ -32,7 +34,7 @@ suite('Customers', function() {
       Customers.insert({name: 'Bruce Lee'});
     });
   });
-
+/*
   test('using two clients', function(done, server, c1, c2) {
     c1.eval(function() {
       Customers.find().observe({
@@ -43,10 +45,14 @@ suite('Customers', function() {
         emit('customer', customer);
       }
       emit('done');
-    }).once('customer', function(customer) {
+    });
+
+    c1.once('customer', function(customer) {
       assert.equal(customer.name, 'from c2');
       done();
-    }).once('done', function() {
+    });
+
+    c1.once('done', function() {
       c2.eval(insertCustomer);
     });
 
@@ -54,4 +60,5 @@ suite('Customers', function() {
       Customers.insert({name: 'from c2'});
     }
   });
+*/
 });
