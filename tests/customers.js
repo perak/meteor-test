@@ -1,4 +1,5 @@
 var assert = require("assert");
+
 	suite("Pubs/Subs", function() {
 		test("client and server", function(done, server, client) {
 
@@ -31,20 +32,6 @@ var assert = require("assert");
 			});
 		});
 
-
-		test("test_name", function(done, server, client1, client2, client3) {
-
-			server.eval(function() {
-				emit("message_name", "Hello!");
-			});
-
-			server.once("message_name", function(data) {
-				console.log(data); // will print "Hello!"
-				done(); // exit from test
-			});
-
-		});
-
 		test("server only", function(done, server) {
 
 			// this code is executed at server
@@ -73,4 +60,20 @@ var assert = require("assert");
 
 		});
 
+	});
+
+
+	suite("suite_name", function() {
+		test("test_name", function(done, server, client1, client2, client3) {
+
+			server.eval(function() {
+				emit("message_name", "Hello!");
+			});
+
+			server.once("message_name", function(data) {
+				console.log(data); // will print "Hello!"
+				done(); // exit from test
+			});
+
+		});
 	});
