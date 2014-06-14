@@ -8,6 +8,6 @@ Customers.allow({
 	},
 
 	remove: function (userId, doc) {
-		return true;
+		return doc.name != "Chuck Norris"; // can't remove Chuck Norris - he only can remove you!
 	}
 });

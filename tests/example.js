@@ -32,6 +32,36 @@ var assert = require("assert");
 			});
 		});
 
+
+
+
+		test("permissions", function(done, server, client) {
+
+			client.eval(function() {
+				var id = Customers.insert({name: "Chuck Norris"});
+				Customers.remove({_id: id}, function(error) {
+						if(error) {
+							emit("done");
+						} else {
+							emit("failed");
+						}
+					}
+				);
+			});
+
+			client.once("failed", function() {
+				assert(false);
+			});
+
+			client.once("done", function() {
+				done();
+			});
+		});
+
+
+
+
+
 		test("server only", function(done, server) {
 
 			// this code is executed at server

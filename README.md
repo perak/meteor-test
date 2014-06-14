@@ -77,6 +77,8 @@ Testing pubs/subs
 
 **Server side only**
 
+In this example new customer is inserted at server side and we test what is written:
+
 	suite("Pubs/Subs", function() {
 
 		test("server only", function(done, server) {
@@ -112,6 +114,8 @@ Testing pubs/subs
 
 **Client and server**
 
+In this example new customer is inserted at client side and we test what is written at server side:
+
 	test("client and server", function(done, server, client) {
 
 		// this code is executed at server
@@ -142,3 +146,45 @@ Testing pubs/subs
 			Customers.insert({name: "Bruce Lee"});
 		});
 	});
+
+
+Testing allow/deny rules
+------------------------
+
+I've added simple rule into `Customers.allow` :
+
+	remove: function (userId, doc) {
+		return doc.name != "Chuck Norris"; // can't remove Chuck Norris!
+	}
+	
+Let's test it (client side) :
+
+		test("permissions", function(done, server, client) {
+
+			// this code is executed at client
+			client.eval(function() {
+				// insert "Chuck Norris"
+				var id = Customers.insert({name: "Chuck Norris"});
+
+				// Now try to remove him...
+				Customers.remove({_id: id}, function(error) {
+						if(error) {
+							// on error: test is successful - cannot remove Chuck Norris!
+							emit("done");
+						} else {
+							// on success: test fails
+							emit("failed");
+						}
+					}
+				);
+			});
+
+			client.once("failed", function() {
+				assert(false, "Oh my... client removed Chuck Norris!");
+			});
+
+			client.once("done", function() {
+				done();
+			});
+		});
+
