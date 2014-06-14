@@ -10,3 +10,5 @@ iron-router
 bootstrap3-less
 font-awesome
 bootboxjs
+accounts-base
+accounts-password

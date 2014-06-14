@@ -4,7 +4,7 @@ Customers.allow({
 	},
 
 	update: function (userId, doc, fields, modifier) {
-		return true;
+		return !!userId;
 	},
 
 	remove: function (userId, doc) {

@@ -33,9 +33,7 @@ var assert = require("assert");
 		});
 
 
-
-
-		test("permissions", function(done, server, client) {
+		test("allow/deny rules", function(done, server, client) {
 
 			client.eval(function() {
 				var id = Customers.insert({name: "Chuck Norris"});
@@ -58,8 +56,67 @@ var assert = require("assert");
 			});
 		});
 
+		test("user permissions (non authenticated users)", function(done, server, client) {
+			client.eval(function() {
+				// insert "Chuck Norris"
+				var id = Customers.insert({name: "Chuck Norris"});
+
+				// "allow" rule is set to deny updates from non-authenticated users 
+				Customers.update({_id: id}, {$set: {name: "Bruce Lee"}}, {}, function(error) {
+						if(error) {
+							// this client is not authenticated, so trying to update document should fail - test passed
+							emit("done");
+						} else {
+							// if user successfully updates document test failed
+							emit("failed");
+						}
+					}
+				);
+			});
+
+			client.once("failed", function() {
+				assert(false);
+			});
+
+			client.once("done", function() {
+				done();
+			});
+		});
 
 
+		test("user permissions (authenticated users)", function(done, server, client) {
+			// insert one user
+			server.eval(function() {
+				Accounts.createUser({email: "x@y.abc", password: "qwerty"});
+			});
+
+			client.eval(function() {
+				// insert "Chuck Norris"
+				var id = Customers.insert({name: "Chuck Norris"});
+
+				// "allow" rule is set to allow updates from authenticated users 
+				Meteor.loginWithPassword("x@y.abc", "qwerty", function(err) {
+					Customers.update({_id: id}, {$set: { name: "Bruce Lee"}}, {}, function(error) {
+							if(error) {
+								// on error: test failed
+								emit("failed");
+							} else {
+								// on success: test passed
+								emit("done");
+							}
+						}
+					);
+				});
+			});
+
+			client.once("failed", function() {
+				assert(false);
+			});
+
+			client.once("done", function() {
+				done();
+			});
+		});
 
 
 		test("server only", function(done, server) {

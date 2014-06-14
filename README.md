@@ -71,6 +71,10 @@ You can comunicate between eval code and testing function using `emit() / once()
 
 	});
 
+Methods `eval` and `once` can be chained:
+
+	server.eval(function() { emit("something"); }).once("something", function() { ... });
+
 
 Testing pubs/subs
 -----------------
@@ -188,3 +192,82 @@ Let's test it (client side) :
 			});
 		});
 
+
+Testing user permissions
+------------------------
+
+I've added rule to allow collection update only for authenticated users:
+
+	Customers.allow({
+		update: function (userId, doc, fields, modifier) {
+			return !!userId;
+		}
+	}
+
+
+Now test update from **non-authenticated** user:
+
+	test("user permissions (non authenticated users)", function(done, server, client) {
+		client.eval(function() {
+			// insert "Chuck Norris"
+			var id = Customers.insert({name: "Chuck Norris"});
+
+			// "allow" rule is set to deny updates from non-authenticated users 
+			Customers.update({_id: id}, {$set: {name: "Bruce Lee"}}, {}, function(error) {
+					if(error) {
+						// this client is not authenticated, so trying to update document should fail - test passed
+						emit("done");
+					} else {
+						// if user successfully updates document test failed
+						emit("failed");
+					}
+				}
+			);
+		});
+
+		client.once("failed", function() {
+			assert(false);
+		});
+
+		client.once("done", function() {
+			done();
+		});
+	});
+
+The same thing, but for **authenticated** user:
+
+	test("user permissions (authenticated users)", function(done, server, client) {
+		// insert one user
+		server.eval(function() {
+			Accounts.createUser({email: "x@y.abc", password: "qwerty"});
+		});
+
+		client.eval(function() {
+			// insert "Chuck Norris"
+			var id = Customers.insert({name: "Chuck Norris"});
+
+			// "allow" rule is set to allow updates from authenticated users 
+			Meteor.loginWithPassword("x@y.abc", "qwerty", function(err) {
+				Customers.update({_id: id}, {$set: { name: "Bruce Lee"}}, {}, function(error) {
+						if(error) {
+							// on error: test failed
+							emit("failed");
+						} else {
+							// on success: test passed
+							emit("done");
+						}
+					}
+				);
+			});
+		});
+
+		client.once("failed", function() {
+			assert(false);
+		});
+
+		client.once("done", function() {
+			done();
+		});
+	});
+
+That's all folks. :)
