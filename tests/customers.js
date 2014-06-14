@@ -1,8 +1,8 @@
 var assert = require("assert");
-
+/*
 	suite("suite_name", function() {
 
-		test("test_name", function(done, server, client1, client2, client3 /* ...and more clients */ ) {
+		test("test_name", function(done, server, client1, client2, client3) {
 
 			server.eval(function() {
 				emit("message_name", "Hello!");
@@ -16,39 +16,8 @@ var assert = require("assert");
 		});
 
 	});
-
-	suite("Pubs/Subs", function() {
-
-		test("client and server", function(done, server, client) {
-
-			// this code is executed at server
-			server.eval(function() {
-				// Server is waiting new customer to appear in Customers collection
-				Customers.find().observe({
-					added: addedNewCustomer
-				});
-				// this function is executed when new customer appear
-				function addedNewCustomer(customer) {
-					// send event whith customer object
-					emit("customer", customer);
-				}
-			});
-
-			// catch event sent from server
-			server.once("customer", function(customer) {
-				// check if customer is "Bruce Lee"
-				assert.equal(customer.name, "Bruce Lee");
-				// exit from test
-				done();
-			});
-
-			// this code is executed at client
-			client.eval(function() {
-				// insert "Bruce Lee" into Customers collection
-				Customers.insert({name: "Bruce Lee"});
-			});
-		});
-
+*/
+	suite("Pubs/Subs 1", function() {
 
 		test("server only", function(done, server) {
 
@@ -76,6 +45,38 @@ var assert = require("assert");
 				done();
 			});
 
+		});
+
+		test("client and server", function(done, server, client) {
+
+			// this code is executed at server
+			server.eval(function() {
+				// Server is waiting new customer to appear in Customers collection
+				var queryHandle = Customers.find().observe({
+					added: addedNewCustomer
+				});
+				// this function is executed when new customer appear
+				function addedNewCustomer(customer) {
+					// send event whith customer object
+					queryHandle.stop();
+					emit("customer", customer);
+				}
+			});
+
+			// catch event sent from server
+			server.once("customer", function(customer) {
+				// check if customer is "Bruce Lee"
+				assert.equal(customer.name, "Bruce Lee");
+				// exit from test
+				done();
+			});
+
+			// this code is executed at client
+			client.eval(function() {
+console.log("Insert!!!!");
+				// insert "Bruce Lee" into Customers collection
+				Customers.insert({name: "Bruce Lee"});
+			});
 		});
 
 	});
