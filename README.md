@@ -17,7 +17,7 @@ Laika searches for .js files under './tests' directory and it executes tests ins
 
     });
 
-Each test under suite is done by function `test` which has callback with variable number of arguments:
+Each test under suite is run inside function `test` which has callback with variable number of arguments:
 
 	suite("suite_name", function() {
 
@@ -116,15 +116,16 @@ Testing pubs/subs
 
 		// this code is executed at server
 		server.eval(function() {
-			// Server is waiting new customer to appear in Customers collection
-			Customers.find().observe({
-				added: addedNewCustomer
-			});
-			// this function is executed when new customer appear
+			// this function is callback which will be executed when new customer appears
 			function addedNewCustomer(customer) {
 				// send event whith customer object
 				emit("customer", customer);
 			}
+
+			// Set callback to execute when new customer appears in Customers collection
+			Customers.find().observe({
+				added: addedNewCustomer
+			});
 		});
 
 		// catch event sent from server
