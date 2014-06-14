@@ -9,7 +9,7 @@ Just playing around with "laika" and "codeship"...
 Laika syntax
 ------------
 
-Laika searches for .js files under './tests' directory and it executes tests inside `suite` functions.
+Laika searches for .js files under './tests' directory and executes tests inside `suite` functions:
 
     suite("suite_name", function() {
 
