@@ -17,8 +17,8 @@ var assert = require("assert");
 
 	});
 */
-	suite("Pubs/Subs 1", function() {
-
+	suite("Pubs/Subs", function() {
+/*
 		test("server only", function(done, server) {
 
 			// this code is executed at server
@@ -46,7 +46,7 @@ var assert = require("assert");
 			});
 
 		});
-
+*/
 		test("client and server", function(done, server, client) {
 
 			// this code is executed at server
@@ -73,7 +73,6 @@ var assert = require("assert");
 
 			// this code is executed at client
 			client.eval(function() {
-console.log("Insert!!!!");
 				// insert "Bruce Lee" into Customers collection
 				Customers.insert({name: "Bruce Lee"});
 			});
