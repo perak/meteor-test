@@ -1,9 +1,93 @@
-Meteor Test
+Meteor testing with "Laika" and "Codeship" tutorial
 ===========
 
-Just playing around with "laika" and "codeship"...
-
 ![image](https://www.codeship.io/projects/4e939ae0-d4f6-0131-bcf5-76b58fc60a40/status)
+
+
+What is "Laika"?
+----------------
+[Laika](http://arunoda.github.io/laika/) is testing framework for Meteor. 
+With laika you can simply write tests that interact with both server and client(s).
+
+
+How it works?
+-------------
+Laika uses [phantomjs](http://phantomjs.org/) "headless" browser to simulate clients. Data you write into database during tests is stored into separate mongo database, so your original application database remains intact.
+
+
+Installing Laika
+----------------
+In short, you need to install laika, phantomjs and mongod server. Here is step-by-step guide for **Ubuntu linux 12.04**, for other OS and more details look [here](http://arunoda.github.io/laika/).
+
+**Laika**
+
+    sudo npm -g install laika
+
+My version is `0.3.9`. Check your version with:
+
+    laika -v
+    
+    
+**phantomjs**
+
+Don't install phantomjs with apt-get package manager because current version is old - you should install it manually:
+
+    cd /usr/local/share
+    sudo wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2
+    sudo tar xjf phantomjs-1.9.7-linux-x86_64.tar.bz2
+    sudo ln -s /usr/local/share/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/local/share/phantomjs
+    sudo ln -s /usr/local/share/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs
+    sudo ln -s /usr/local/share/phantomjs-1.9.7-linux-x86_64/bin/phantomjs /usr/bin/phantomjs
+
+
+My version is `1.9.7`. Check your version with:
+
+    phantomjs -v
+    
+**mongodb**
+
+You can install mongo server using package manager:
+
+    sudo apt-get install mongodb-server
+    
+Also, you can install full mongo package named "mongodb", but mongodb-server is enough for running laika tests.
+
+
+Write your first test and run laika
+-----------------------------------
+Create new meteor application (ur use existing one). Inside application root directory create `tests` directory, create new .js file there and copy&paste this:
+
+````
+suite("Dummy test", function() {
+    test("Always pass", function(done) {
+        done();
+    });
+});
+````
+
+This test does nothing useful and is for example only. Now inside your application root directory run laika:
+
+    sudo laika
+    
+You should get output like this:
+
+````
+  injecting laika...
+  loading phantomjs...
+  loading initial app pool...
+              
+  Dummy test
+    ✓ Always pass 
+        
+  1 passing (4ms)
+        
+  cleaning up injected code
+````
+
+If you want more details on what's going on, run laika with "verbose" option:
+
+    sudo laika -V
+    
 
 
 Laika syntax
@@ -27,7 +111,9 @@ Each test under suite is run inside function `test` which has callback with vari
 
 	});
 
-Argument `done` is function, when called - test will exit. If you don't call `done()` test will fail (timeout).
+Argument `done` is function, when called - test will exit as "passed". 
+If you call `assert()` which evals to false, test will exit as "not passed". 
+If you don't call `done()` or `assert()` test will fail (timeout).
 
 To run code at server or at client, use `.eval()` method:
 
@@ -73,13 +159,25 @@ You can comunicate between eval code and testing function using `emit() / once()
 
 Methods `eval` and `once` can be chained:
 
-	server.eval(function() { emit("something"); }).once("something", function() { ... });
+	server.eval(function() { emit("event_name", payload); }).once("event_name", function(payload) { ... });
+
+
+Note that `done()` and `assert()` must be called from inside test function (not inside server.eval or client.eval).
+
+
+Example application
+-------------------
+
+I made this simple application with Customers collection. If you want to run following examples, just clone this application:
+
+    git clone https://github.com/perak/meteor-test.git
+    
 
 
 Testing pubs/subs
 -----------------
 
-**Server side only**
+**Example 1: Server side only**
 
 In this example new customer is inserted at server side and we test what is written:
 
@@ -116,7 +214,7 @@ In this example new customer is inserted at server side and we test what is writ
 	});
 
 
-**Client and server**
+**Example 2: Client and server**
 
 In this example new customer is inserted at client side and we test what is written at server side:
 
@@ -155,12 +253,15 @@ In this example new customer is inserted at client side and we test what is writ
 Testing allow/deny rules
 ------------------------
 
-I've added simple rule into `Customers.allow` :
+**Example 3**<br />
+I've added simple rule into `Customers.allow`:
 
-	remove: function (userId, doc) {
-		return doc.name != "Chuck Norris"; // can't remove Chuck Norris!
-	}
-	
+	Customers.allow({
+	    remove: function (userId, doc) {
+	    	return doc.name != "Chuck Norris"; // can't remove Chuck Norris!
+	    }
+	});
+
 Let's test it (client side) :
 
 		test("permissions", function(done, server, client) {
@@ -196,6 +297,7 @@ Let's test it (client side) :
 Testing user permissions
 ------------------------
 
+**Example 4**<br />
 I've added rule to allow collection update only for authenticated users:
 
 	Customers.allow({
@@ -234,6 +336,7 @@ Now test update from **non-authenticated** user:
 		});
 	});
 
+**Example 5**<br />
 The same thing, but for **authenticated** user:
 
 	test("user permissions (authenticated users)", function(done, server, client) {
@@ -269,5 +372,48 @@ The same thing, but for **authenticated** user:
 			done();
 		});
 	});
+
+
+Codeship
+========
+
+What is Codeship?
+-----------------
+[Codeship](https://www.codeship.io/) is some kind of web based virtual machine which executes tests each time we push our code. It supports bunch of technologies such as Ruby, nodejs, Python... etc. and also source code providers such as github and bitbucket.
+
+Setup Codeship for Meteor and Laika
+-----------------------------------
+First, create your codeship account [here](https://www.codeship.io/). For github and meteor follow these steps
+
+1. In **Select your SCM** page chose **github**
+2. Then **select your github repository** containing meteor application with tests
+3. In **Setup Test Commands** page:
+
+"Select your technology to prepopulate basic commands": choose **node.js**<br>
+
+"Modify your Setup Commands" copy&paste this:
+
+````
+nvm install 0.10.26
+nvm use 0.10.26
+git clone https://github.com/meteor/meteor.git ~/meteor
+export PATH=~/meteor/:$PATH
+npm install -g meteorite laika
+````
+
+"Modify your Test Commands":
+
+````
+METEOR_PATH=~/meteor laika -t 60000 -V
+````
+
+laika `-t` option is timeout setting: if test doesn't finish in 60000ms test will be stopped and marked as "failed". `-V` option is "verbose": laika will print what is happening.
+
+Run test
+--------
+
+To run your test, push something into repository. Codeship gives you link to image which you can insert into your README.md and push. This is not mandatory but is handy: image will be red if some of tests fails or green if all tests are successfull (and gray while test is running).
+
+After you push, watch what is happening in codeship by opening project details. After test executes you'l get e-mail with results.
 
 That's all folks. :)
